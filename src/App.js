@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import logo from "./logo.svg";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  handleClick = id => {
+    this.props.delePost(id);
+  };
+  render() {
+    const { posts } = this.props;
+    const postData = posts.length ? (
+      posts.map(post => {
+        return (
+          <div className="base" key={post.id}>
+            <h2>
+              {post.title}{" "}
+              <button onClick={() => this.handleClick(post.id)}>x</button>
+            </h2>
+          </div>
+        );
+      })
+    ) : (
+      <p>Aucun article</p>
+    );
+    return (
+      <div className="accueil">
+        <h1>Page d'accueil</h1>
+        {postData}
+      </div>
+    );
+  }
 }
 
-export default App;
+const mapStateProps = state => {
+  return {
+    posts: state.posts
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    delePost: id => {
+      dispatch({ type: "DELETE_POST", id });
+    }
+  };
+};
+export default connect(mapStateProps, mapDispatchToProps)(App);
